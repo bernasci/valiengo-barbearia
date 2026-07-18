@@ -34,7 +34,9 @@
    isto, a régua de dias estica o formulário para além da tela no celular. */
 fieldset { min-inline-size: 0; }
 
-html { scroll-behavior: smooth; }
+/* O fundo também no html: com overflow-x hidden no body, o iOS Safari deixa de
+   propagar o fundo para o canvas e mostra uma faixa branca atrás da barra. */
+html { scroll-behavior: smooth; background: var(--breu); }
 
 body {
   margin: 0;
