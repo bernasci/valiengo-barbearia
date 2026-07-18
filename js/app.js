@@ -3,6 +3,8 @@ import {
   PASSO_MIN, buscarServico,
 } from './config.js';
 import { listarOcupadosPeriodo, criarAgendamento } from './agenda.js';
+import { estaLogado, obterPerfil } from './perfil.js';
+import { iniciarConta, pedirLogin } from './conta.js';
 
 /* ── Utilidades de tempo ─────────────────────────────────── */
 
@@ -110,7 +112,7 @@ function travarAgenda(mensagem) {
   const aviso = document.getElementById('erro-agenda');
   aviso.textContent = mensagem;
   aviso.hidden = false;
-  for (const id of ['passo-data', 'passo-hora', 'passo-dados']) {
+  for (const id of ['passo-data', 'passo-hora']) {
     document.getElementById(id).disabled = true;
   }
   document.getElementById('opcoes-servico').querySelectorAll('input')
@@ -249,7 +251,6 @@ function ligarPassoData() {
     escolha.data = e.target.value;
     escolha.inicio = null;
     document.getElementById('passo-hora').disabled = false;
-    document.getElementById('passo-dados').disabled = true;
     pintarHoras();
     atualizarResumo();
   });
@@ -261,7 +262,6 @@ function limparHoras() {
   document.getElementById('opcoes-hora').replaceChildren();
   document.getElementById('aviso-hora').hidden = true;
   document.getElementById('passo-hora').disabled = true;
-  document.getElementById('passo-dados').disabled = true;
 }
 
 function pintarHoras() {
@@ -291,7 +291,6 @@ function pintarHoras() {
 function ligarPassoHora() {
   document.getElementById('opcoes-hora').addEventListener('change', (e) => {
     escolha.inicio = e.target.value;
-    document.getElementById('passo-dados').disabled = false;
     atualizarResumo();
   });
 }
@@ -314,45 +313,35 @@ function atualizarResumo() {
     ? dinheiro(servico.preco) + (ehPlano ? ' /mês' : '')
     : '—';
 
+  const contaEl = document.getElementById('resumo-conta');
+  contaEl.textContent = estaLogado()
+    ? `Agendando como ${obterPerfil().nome}`
+    : 'Você entra com nome e celular ao reservar.';
+
   document.getElementById('btn-confirmar').disabled =
     !(escolha.servicoId && escolha.data && escolha.inicio);
 }
 
-/* ── Passo 4 · envio ─────────────────────────────────────── */
-
-const soDigitos = (s) => s.replace(/\D/g, '');
-
-function mascararTelefone(campo) {
-  campo.addEventListener('input', () => {
-    const d = soDigitos(campo.value).slice(0, 11);
-    campo.value = d.length <= 2 ? d
-      : d.length <= 7 ? `(${d.slice(0, 2)}) ${d.slice(2)}`
-      : `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-  });
-}
+/* ── Envio da reserva ────────────────────────────────────── */
 
 function ligarFormulario() {
   const form = document.getElementById('form-agenda');
-  const erro = document.getElementById('erro-form');
+  const erro = document.getElementById('erro-reserva');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (!(escolha.servicoId && escolha.data && escolha.inicio)) return;
     erro.hidden = true;
 
-    const nome = document.getElementById('campo-nome').value.trim();
-    const telefone = document.getElementById('campo-telefone').value.trim();
-
-    if (nome.length < 2) {
-      erro.textContent = 'Escreva seu nome para o Marcos saber quem chega.';
-      erro.hidden = false;
-      return;
-    }
-    if (soDigitos(telefone).length < 10) {
-      erro.textContent = 'Informe um celular com DDD, assim ele consegue te avisar.';
-      erro.hidden = false;
-      return;
+    // Não há mais passo de contato: quem ainda não tem perfil entra agora, e a
+    // reserva segue com o nome e o celular salvos.
+    if (!estaLogado()) {
+      const entrou = await pedirLogin();
+      if (!entrou) return;
+      atualizarResumo();
     }
 
+    const { nome, telefone } = obterPerfil();
     const servico = buscarServico(escolha.servicoId);
     const btn = document.getElementById('btn-confirmar');
     btn.disabled = true;
@@ -519,7 +508,11 @@ pintarEstado();
 pintarServicos();
 pintarOpcoesServico();
 pintarVisita();
-mascararTelefone(document.getElementById('campo-telefone'));
+
+// Quando o cliente entra ou sai, o resumo da reserva reflete na hora.
+// (registrado antes de iniciarConta, que já dispara o estado inicial)
+document.addEventListener('conta:mudou', atualizarResumo);
+iniciarConta();
 
 ligarPassoData();
 ligarPassoHora();

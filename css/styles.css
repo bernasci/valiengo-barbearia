@@ -193,9 +193,10 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .topo__nav a:hover { color: var(--latao-claro); }
 .topo__nav a:hover::after { transform: scaleX(1); }
 
-.topo__cta {
+.topo__conta {
   padding: .6rem 1.15rem;
   border: 1px solid var(--latao);
+  background: none;
   font-family: var(--fonte-util);
   font-size: .78rem;
   font-weight: 600;
@@ -203,13 +204,27 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   letter-spacing: .14em;
   color: var(--latao);
   text-decoration: none;
+  cursor: pointer;
   transition: background var(--resp), color var(--resp);
 }
-.topo__cta:hover { background: var(--latao); color: var(--breu); }
+.topo__conta:hover { background: var(--latao); color: var(--breu); }
+/* Logado: mostra o nome; um ponto discreto marca a sessão ativa. */
+.topo__conta[data-logado="sim"] { color: var(--porcelana); }
+.topo__conta[data-logado="sim"]::before {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  margin-right: .5rem;
+  border-radius: 50%;
+  background: var(--latao);
+  vertical-align: middle;
+}
+.topo__conta[data-logado="sim"]:hover { color: var(--breu); }
+.topo__conta[data-logado="sim"]:hover::before { background: var(--breu); }
 
 @media (max-width: 46rem) {
   .topo__nav { display: none; }
-  .topo__cta { margin-left: auto; }
+  .topo__conta { margin-left: auto; }
 }
 
 /* ── Capa ───────────────────────────────────────────────── */
@@ -642,6 +657,15 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   color: var(--porcelana);
 }
 
+.resumo__acao { display: grid; gap: .5rem; justify-items: stretch; text-align: right; }
+.resumo__conta {
+  font-family: var(--fonte-util);
+  font-size: .78rem;
+  letter-spacing: .04em;
+  color: var(--porcelana-fosca);
+}
+@media (max-width: 46rem) { .resumo__acao { text-align: left; } }
+
 /* Bilhete de confirmação */
 .bilhete {
   display: grid;
@@ -777,7 +801,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .topo__marca { font-size: 1.15rem; }
 
   /* 44px é o mínimo confortável para o dedo */
-  .topo__cta { min-height: 44px; padding: .6rem 1rem; }
+  .topo__conta { min-height: 44px; padding: .6rem 1rem; }
   .botao { min-height: 48px; }
   .ficha__corpo { min-height: 48px; align-content: center; }
 
@@ -792,6 +816,51 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .capa__acoes { width: 100%; flex-direction: column; }
   .capa__acoes .botao { width: 100%; }
 }
+
+/* ── Modal de conta (login/perfil) ─────────────────────── */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+.modal__fundo {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .7);
+  backdrop-filter: blur(4px);
+}
+.modal__caixa {
+  position: relative;
+  width: min(26rem, 100%);
+  padding: clamp(1.75rem, 5vw, 2.5rem);
+  background: linear-gradient(160deg, var(--breu-claro), var(--breu));
+  border: 1px solid var(--latao);
+  box-shadow: 0 32px 64px -32px rgba(0, 0, 0, .9);
+  animation: subir 300ms var(--curva) both;
+}
+.modal__x {
+  position: absolute;
+  top: .35rem;
+  right: .35rem;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: none;
+  color: var(--porcelana-fosca);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--resp);
+}
+.modal__x:hover { color: var(--porcelana); }
+.modal__titulo { font-size: clamp(1.6rem, 1.3rem + 1vw, 2rem); line-height: 1.1; margin: .25rem 0 .6rem; }
+.modal__texto { color: rgba(240, 240, 240, .7); font-size: .95rem; line-height: 1.5; margin-bottom: 1.5rem; }
+.modal__caixa .campo { margin-bottom: 1rem; }
+.modal__acoes { display: grid; gap: .6rem; margin-top: 1.5rem; }
 
 /* ── Movimento reduzido ─────────────────────────────────── */
 
