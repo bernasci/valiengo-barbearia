@@ -7,6 +7,7 @@ import { el, api, corpoJson, dinheiro, soDigitos } from './painel-comum.js';
 
 let aoExpirar = () => {};
 let planos = [];
+let templateCobranca = '';
 
 export function iniciarAssinantes(opcoes = {}) {
   aoExpirar = opcoes.aoExpirar || (() => {});
@@ -32,14 +33,16 @@ async function render() {
   let assinantes;
   let pagos;
   try {
-    const [ra, rp, rpl] = await Promise.all([
+    const [ra, rp, rpl, rc] = await Promise.all([
       api('assinantes?select=*&order=status.asc,nome.asc', { method: 'GET' }),
       api(`pagamentos_assinatura?select=assinante_id&competencia=eq.${comp}`, { method: 'GET' }),
       api('servicos?select=id,nome,preco&tipo=eq.plano&order=ordem.asc', { method: 'GET' }),
+      api('ajustes?select=valor&chave=eq.cobranca', { method: 'GET' }),
     ]);
     assinantes = await ra.json();
     pagos = new Set((await rp.json()).map((p) => p.assinante_id));
     planos = await rpl.json();
+    templateCobranca = (await rc.json())[0]?.valor?.mensagem || '';
   } catch (falha) {
     if (falha instanceof SessaoExpirada) return aoExpirar();
     alvo.replaceChildren(el('p', { class: 'ajustes-erro', text: falha.message }));
@@ -157,7 +160,20 @@ function cartaoAssinante(a, pago, hoje) {
   );
 }
 
-/** Badge do mês + botão marcar pago / desfazer (só para assinante ativo). */
+/** Monta a mensagem de cobrança a partir do modelo do Marcos, trocando os {campos}. */
+function mensagemCobranca(a) {
+  const plano = planos.find((p) => p.id === a.plano_id);
+  const campos = {
+    nome: a.nome,
+    plano: plano ? plano.nome : 'assinatura',
+    valor: plano ? dinheiro(plano.preco) : '',
+    mes: nomeMes(),
+    vencimento: `dia ${a.dia_vencimento}`,
+  };
+  return (templateCobranca || '').replace(/\{(\w+)\}/g, (m, k) => (k in campos ? campos[k] : m));
+}
+
+/** Badge do mês + botão marcar pago / desfazer + cobrar (só para assinante ativo). */
 function blocoPagamento(a, pago, hoje) {
   const bloco = el('div', { class: 'assinante-pag' });
 
@@ -192,7 +208,13 @@ function blocoPagamento(a, pago, hoje) {
     },
   });
 
-  bloco.append(badge, botao);
+  const cobrar = el('a', {
+    class: 'assinante-cobrar',
+    href: `https://wa.me/55${soDigitos(a.telefone)}?text=${encodeURIComponent(mensagemCobranca(a))}`,
+    target: '_blank', rel: 'noopener', text: 'Cobrar',
+  });
+
+  bloco.append(badge, botao, cobrar);
   return bloco;
 }
 

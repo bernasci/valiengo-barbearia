@@ -42,12 +42,14 @@ async function render() {
   }
 
   const estudio = (ajustes.find((a) => a.chave === 'estudio') || {}).valor || {};
+  const cobranca = (ajustes.find((a) => a.chave === 'cobranca') || {}).valor || {};
 
   alvo.replaceChildren(
     grupoEditor('Serviços', 'servico', servicos.filter((s) => s.tipo === 'servico')),
     grupoEditor('Planos mensais', 'plano', servicos.filter((s) => s.tipo === 'plano')),
     editorEstudio(estudio),
     editorHorarios(horarios),
+    editorCobranca(cobranca),
   );
 }
 
@@ -349,6 +351,47 @@ function editorHorarios(horarios) {
     el('h2', { class: 'ajustes-grupo__titulo', text: 'Horários' }),
     el('p', { class: 'ajustes-nota', text: 'Dia sem turno fica fechado. Os horários batem com a grade de agendamento — mudou aqui, muda no site e no que o cliente pode marcar.' }),
     container,
+    el('div', { class: 'edit-acoes' }, salvar, status),
+  );
+}
+
+/* ── Mensagem de cobrança dos assinantes ─────────────────── */
+
+// O Marcos escreve o modelo (com o link de pagamento dele). No botão "Cobrar"
+// da aba Assinantes, os {campos} são trocados pelos dados de cada assinante.
+function editorCobranca(cobranca) {
+  const area = el('textarea', {
+    class: 'edit-campo cobranca-area',
+    rows: 6,
+    value: cobranca.mensagem || '',
+    placeholder: 'Oi {nome}! Sua assinatura {plano} de {mes} — {valor}. Pague por aqui: LINK',
+  });
+  const status = el('span', { class: 'edit-status' });
+
+  const salvar = el('button', {
+    class: 'edit-salvar', type: 'button', text: 'Salvar mensagem',
+    onclick: async () => {
+      salvar.disabled = true;
+      status.textContent = 'Salvando…';
+      try {
+        await api('ajustes?chave=eq.cobranca', corpoJson({
+          method: 'PATCH',
+          body: JSON.stringify({ valor: { ...cobranca, mensagem: area.value }, atualizado_em: new Date().toISOString() }),
+        }));
+        status.textContent = 'Salvo ✓';
+      } catch (falha) {
+        if (falha instanceof SessaoExpirada) return aoExpirar();
+        status.textContent = falha.message;
+      } finally {
+        salvar.disabled = false;
+      }
+    },
+  });
+
+  return el('section', { class: 'ajustes-grupo' },
+    el('h2', { class: 'ajustes-grupo__titulo', text: 'Cobrança dos assinantes' }),
+    el('p', { class: 'ajustes-nota', text: 'A mensagem que o botão “Cobrar” manda no WhatsApp do assinante. Cole aqui o seu link de pagamento. Atalhos que são trocados por assinante: {nome}, {plano}, {valor}, {mes}, {vencimento}.' }),
+    el('label', { class: 'edit-rotulo' }, el('span', { text: 'Mensagem' }), area),
     el('div', { class: 'edit-acoes' }, salvar, status),
   );
 }

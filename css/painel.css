@@ -369,6 +369,35 @@
 .pag-badge--atraso { color: var(--breu); background: var(--porcelana); }
 .pag-badge--off { color: var(--aco); border-color: rgba(240, 240, 240, .18); }
 
+/* Botão Cobrar (WhatsApp com a mensagem de cobrança pronta) */
+.assinante-cobrar {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: .4rem .9rem;
+  border: 1px solid var(--latao);
+  background: var(--latao);
+  color: var(--breu);
+  font-family: var(--fonte-util);
+  font-size: .74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--resp), border-color var(--resp);
+}
+.assinante-cobrar:hover { background: var(--latao-claro); border-color: var(--latao-claro); }
+
+/* Textarea da mensagem de cobrança (aba Ajustes) */
+.cobranca-area {
+  width: 100%;
+  min-height: 8rem;
+  resize: vertical;
+  line-height: 1.5;
+  font-family: var(--fonte-texto);
+}
+
 .assinante-novo__titulo {
   font-family: var(--fonte-util);
   font-size: .72rem;
