@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valiengo · Estúdio Barbearia — São João da Barra/RJ</title>
+<meta name="description" content="Estilo, precisão e identidade. Barbearia em Porto Seguro, São João da Barra/RJ. Corte, barba e planos mensais. Agende seu horário.">
+<meta property="og:title" content="Valiengo · Estúdio Barbearia">
+<meta property="og:description" content="Estilo. Precisão. Identidade. O legado que permanece.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0d0d0d">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Só os pesos que a página usa de fato, e o itálico real da Bodoni para o lema. -->
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Karla:wght@300;400&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Karla:wght@300;400&display=swap">
+</noscript>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<a class="pular" href="#agendar">Ir para o agendamento</a>
+
+<header class="topo" id="topo">
+  <a class="topo__marca" href="#topo">Valiengo</a>
+  <nav class="topo__nav" aria-label="Seções">
+    <a href="#servicos">Serviços</a>
+    <a href="#agendar">Agendar</a>
+    <a href="#visita">Visita</a>
+  </nav>
+  <a class="topo__cta" href="#agendar">Agendar horário</a>
+</header>
+
+<main>
+
+  <!-- ── Capa ─────────────────────────────────────────────── -->
+  <section class="capa">
+    <div class="capa__interno">
+      <p class="sobrancelha capa__local">São João da Barra · Rio de Janeiro</p>
+
+      <h1 class="capa__marca">
+        <span class="capa__nome">Valiengo</span>
+        <span class="capa__tipo">Estúdio · Barbearia</span>
+      </h1>
+
+      <ul class="pilares" aria-label="Pilares do estúdio">
+        <li>Estilo</li>
+        <li>Precisão</li>
+        <li>Identidade</li>
+      </ul>
+
+      <p class="capa__lema">O legado que permanece</p>
+
+      <div class="capa__acoes">
+        <a class="botao botao--cheio" href="#agendar">Agendar horário</a>
+        <a class="botao botao--vazado" href="#servicos">Ver serviços</a>
+      </div>
+
+      <p class="estado" id="estado" data-estado="carregando">
+        <span class="estado__ponto" aria-hidden="true"></span>
+        <span class="estado__texto">Conferindo o horário…</span>
+      </p>
+    </div>
+    <div class="capa__lamina" aria-hidden="true"></div>
+  </section>
+
+  <!-- ── Serviços ─────────────────────────────────────────── -->
+  <section class="secao" id="servicos">
+    <header class="secao__topo">
+      <p class="sobrancelha">Serviços</p>
+      <h2 class="secao__titulo">A tabela</h2>
+    </header>
+
+    <div class="quadro">
+      <ul class="tabela" id="tabela-servicos"></ul>
+    </div>
+
+    <div class="planos">
+      <div class="planos__texto">
+        <p class="sobrancelha">Planos mensais</p>
+        <h3 class="planos__titulo">Toda semana, o mesmo cuidado.</h3>
+        <p class="planos__desc">
+          Um valor por mês, cortes semanais. Disponível de terça a quinta.
+        </p>
+      </div>
+      <ul class="tabela tabela--planos" id="tabela-planos"></ul>
+    </div>
+  </section>
+
+  <!-- ── Agendamento ──────────────────────────────────────── -->
+  <section class="secao secao--agenda" id="agendar">
+    <header class="secao__topo">
+      <p class="sobrancelha">Agendamento</p>
+      <h2 class="secao__titulo">A agenda</h2>
+    </header>
+
+    <div class="caderno">
+      <div class="caderno__lombada" aria-hidden="true"></div>
+
+      <form class="caderno__folha" id="form-agenda" novalidate>
+
+        <p class="erro erro--bloco" id="erro-agenda" role="alert" hidden></p>
+
+        <!-- Passo 1 -->
+        <fieldset class="passo" data-passo="1">
+          <legend><span class="passo__num">Um</span> Escolha o serviço</legend>
+          <div class="opcoes" id="opcoes-servico" role="radiogroup" aria-label="Serviço"></div>
+        </fieldset>
+
+        <!-- Passo 2 -->
+        <fieldset class="passo" data-passo="2" id="passo-data" disabled>
+          <legend><span class="passo__num">Dois</span> Escolha o dia</legend>
+          <div class="dias" id="opcoes-data" role="radiogroup" aria-label="Dia"></div>
+        </fieldset>
+
+        <!-- Passo 3 -->
+        <fieldset class="passo" data-passo="3" id="passo-hora" disabled>
+          <legend><span class="passo__num">Três</span> Escolha a hora</legend>
+          <div class="horas" id="opcoes-hora" role="radiogroup" aria-label="Hora"></div>
+          <p class="aviso" id="aviso-hora" hidden></p>
+        </fieldset>
+
+        <!-- Passo 4 -->
+        <fieldset class="passo" data-passo="4" id="passo-dados" disabled>
+          <legend><span class="passo__num">Quatro</span> Deixe seu contato</legend>
+          <div class="campos">
+            <label class="campo">
+              <span class="campo__rotulo">Nome</span>
+              <input class="campo__entrada" id="campo-nome" name="nome" type="text"
+                     autocomplete="name" required placeholder="Como o Marcos te chama">
+            </label>
+            <label class="campo">
+              <span class="campo__rotulo">Celular</span>
+              <input class="campo__entrada" id="campo-telefone" name="telefone" type="tel"
+                     inputmode="numeric" autocomplete="tel" required placeholder="(22) 90000-0000">
+            </label>
+          </div>
+          <p class="erro" id="erro-form" role="alert" hidden></p>
+        </fieldset>
+
+        <!-- Resumo -->
+        <footer class="resumo" id="resumo">
+          <dl class="resumo__lista">
+            <div><dt>Serviço</dt><dd id="r-servico">—</dd></div>
+            <div><dt>Quando</dt><dd id="r-quando">—</dd></div>
+            <div><dt>Valor</dt><dd id="r-valor">—</dd></div>
+          </dl>
+          <button class="botao botao--cheio" id="btn-confirmar" type="submit" disabled>
+            Reservar horário
+          </button>
+        </footer>
+      </form>
+    </div>
+
+    <!-- Confirmação -->
+    <div class="bilhete" id="bilhete" hidden>
+      <p class="sobrancelha">Horário reservado</p>
+      <h3 class="bilhete__titulo" id="bilhete-titulo"></h3>
+      <p class="bilhete__texto">
+        O horário é seu, já está guardado na agenda. Mande uma mensagem para o
+        Marcos saber que você vem.
+      </p>
+      <div class="bilhete__acoes">
+        <a class="botao botao--cheio" id="bilhete-zap" href="#" target="_blank" rel="noopener">
+          Avisar no WhatsApp
+        </a>
+        <button class="botao botao--vazado" id="bilhete-novo" type="button">
+          Marcar outro
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Visita ───────────────────────────────────────────── -->
+  <section class="secao secao--visita" id="visita">
+    <header class="secao__topo">
+      <p class="sobrancelha">A visita</p>
+      <h2 class="secao__titulo">Onde e quando</h2>
+    </header>
+
+    <div class="visita">
+      <div class="visita__bloco">
+        <h3 class="visita__rotulo">Endereço</h3>
+        <p class="visita__end" id="endereco"></p>
+        <a class="link" id="link-mapa" href="#" target="_blank" rel="noopener">Abrir no mapa</a>
+      </div>
+
+      <div class="visita__bloco">
+        <h3 class="visita__rotulo">Horários</h3>
+        <table class="horarios" id="horarios">
+          <caption class="oculto">Horário de atendimento por dia da semana</caption>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="visita__bloco">
+        <h3 class="visita__rotulo">Pagamento</h3>
+        <ul class="pagamentos" id="pagamentos"></ul>
+
+        <h3 class="visita__rotulo visita__rotulo--esp">Contato</h3>
+        <a class="link link--forte" id="link-tel" href="#"></a>
+        <a class="link" id="link-insta" href="#" target="_blank" rel="noopener">@valiengo.barbearia</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Atalho de celular: some quando a capa ou a própria agenda estão na tela. -->
+<a class="barra" id="barra" href="#agendar" hidden>
+  <span class="barra__texto">Agendar horário</span>
+  <span class="barra__estado" id="barra-estado"></span>
+</a>
+
+<footer class="rodape">
+  <p class="rodape__lema">Estilo. Precisão. Identidade.<br><em>O legado que permanece.</em></p>
+  <p class="rodape__cred">Valiengo Estúdio Barbearia · São João da Barra/RJ</p>
+</footer>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

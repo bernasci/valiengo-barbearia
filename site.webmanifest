@@ -1,0 +1,14 @@
+{
+  "name": "Valiengo · Estúdio Barbearia",
+  "short_name": "Valiengo",
+  "description": "Barbearia em São João da Barra/RJ. Corte, barba e planos mensais. Agende seu horário.",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }
+  ],
+  "theme_color": "#0d0d0d",
+  "background_color": "#0d0d0d",
+  "display": "standalone",
+  "start_url": "./"
+}

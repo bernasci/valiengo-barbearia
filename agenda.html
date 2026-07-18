@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agenda · Valiengo</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0d0d0d">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&family=Karla:wght@300;400&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/painel.css">
+</head>
+<body class="painel">
+
+<!-- ── Entrar ──────────────────────────────────────────────── -->
+<section class="entrar" id="entrar" hidden>
+  <form class="entrar__caixa" id="form-entrar" novalidate>
+    <p class="sobrancelha">Valiengo</p>
+    <h1 class="entrar__titulo">A agenda</h1>
+
+    <label class="campo">
+      <span class="campo__rotulo">E-mail</span>
+      <input class="campo__entrada" id="entrar-email" type="email"
+             autocomplete="username" required>
+    </label>
+    <label class="campo">
+      <span class="campo__rotulo">Senha</span>
+      <input class="campo__entrada" id="entrar-senha" type="password"
+             autocomplete="current-password" required>
+    </label>
+
+    <p class="erro" id="entrar-erro" role="alert" hidden></p>
+    <button class="botao botao--cheio" id="entrar-botao" type="submit">Entrar</button>
+  </form>
+</section>
+
+<!-- ── Painel (agenda + ajustes) ───────────────────────────── -->
+<div id="painel" hidden>
+
+  <header class="painel__topo">
+    <p class="sobrancelha">Valiengo</p>
+    <button class="botao botao--vazado botao--curto" id="sair" type="button">Sair</button>
+  </header>
+
+  <nav class="abas" role="tablist" aria-label="Seções do painel">
+    <button class="aba" id="tab-agenda" type="button" role="tab" data-aba="agenda" aria-selected="true">Agenda</button>
+    <button class="aba" id="tab-assinantes" type="button" role="tab" data-aba="assinantes" aria-selected="false">Assinantes</button>
+    <button class="aba" id="tab-ajustes" type="button" role="tab" data-aba="ajustes" aria-selected="false">Ajustes</button>
+  </nav>
+
+  <!-- Aba: agenda do dia -->
+  <section id="aba-agenda" role="tabpanel" aria-labelledby="tab-agenda">
+    <div class="painel__cab">
+      <p class="sobrancelha">Agenda</p>
+      <h1 class="painel__dia" id="painel-dia"></h1>
+    </div>
+
+    <nav class="navegar" aria-label="Trocar de dia">
+      <button class="navegar__seta" id="dia-antes" type="button" aria-label="Dia anterior">←</button>
+      <button class="navegar__hoje" id="dia-hoje" type="button">Hoje</button>
+      <button class="navegar__seta" id="dia-depois" type="button" aria-label="Próximo dia">→</button>
+    </nav>
+
+    <p class="painel__resumo" id="painel-resumo"></p>
+
+    <main class="lista" id="lista"></main>
+
+    <p class="erro" id="painel-erro" role="alert" hidden></p>
+  </section>
+
+  <!-- Aba: assinantes — preenchida por painel-assinantes.js -->
+  <section id="aba-assinantes" role="tabpanel" aria-labelledby="tab-assinantes" hidden>
+    <div id="assinantes-conteudo"></div>
+  </section>
+
+  <!-- Aba: ajustes (editores) — preenchida por painel-ajustes.js -->
+  <section id="aba-ajustes" role="tabpanel" aria-labelledby="tab-ajustes" hidden>
+    <div id="ajustes-conteudo"></div>
+  </section>
+</div>
+
+<script type="module" src="js/painel.js"></script>
+</body>
+</html>

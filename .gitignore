@@ -1,0 +1,8 @@
+# Editor / OS
+.claude/
+.DS_Store
+Thumbs.db
+*.log
+
+# Dependências (o site não usa, mas por garantia)
+node_modules/
