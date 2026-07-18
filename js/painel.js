@@ -35,6 +35,7 @@ function mostrarPainel() {
   document.getElementById('aba-ajustes').hidden = true;
   document.querySelectorAll('.aba').forEach((b) => b.setAttribute('aria-selected', String(b.id === 'tab-agenda')));
   carregarDia();
+  carregarProximas();
 }
 
 /* ── Login ───────────────────────────────────────────────── */
@@ -148,6 +149,51 @@ async function carregarDia() {
   }
 }
 
+/* ── Próximas reservas ───────────────────────────────────── */
+
+// Uma faixa de atalhos no topo: os dias que têm reserva daqui pra frente, com a
+// contagem. O Marcos abre o painel e já vê o que está por vir, sem precisar
+// clicar dia a dia — foi o que fez uma reserva do dia 23 "sumir" para ele.
+async function carregarProximas() {
+  const caixa = document.getElementById('proximas');
+  try {
+    const resposta = await comSessao(
+      `agendamentos?select=data&data=gte.${iso(new Date())}&order=data.asc`,
+      { method: 'GET' },
+    );
+    if (!resposta.ok) { caixa.hidden = true; return; }
+
+    const contagem = {};
+    for (const { data } of await resposta.json()) contagem[data] = (contagem[data] || 0) + 1;
+    const dias = Object.keys(contagem).sort().slice(0, 14);
+
+    caixa.replaceChildren();
+    if (!dias.length) { caixa.hidden = true; return; }
+
+    const titulo = document.createElement('p');
+    titulo.className = 'proximas__titulo';
+    titulo.textContent = 'Próximas reservas';
+    caixa.append(titulo);
+
+    const fila = document.createElement('div');
+    fila.className = 'proximas__fila';
+    for (const d of dias) {
+      const chip = document.createElement('button');
+      chip.className = 'proxima-chip';
+      chip.type = 'button';
+      const rotulo = new Date(`${d}T12:00`).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      chip.innerHTML = `${rotulo}<span class="proxima-chip__n">${contagem[d]}</span>`;
+      chip.addEventListener('click', () => { diaAberto = new Date(`${d}T12:00`); carregarDia(); });
+      fila.append(chip);
+    }
+    caixa.append(fila);
+    caixa.hidden = false;
+  } catch (falha) {
+    if (falha instanceof SessaoExpirada) { mostrarEntrar(); return; }
+    caixa.hidden = true;
+  }
+}
+
 function pintarLista(reservas) {
   const lista = document.getElementById('lista');
   lista.replaceChildren();
@@ -211,6 +257,7 @@ async function cancelar(reserva, item) {
     const resposta = await comSessao(`agendamentos?id=eq.${reserva.id}`, { method: 'DELETE' });
     if (!resposta.ok) throw new Error('Não deu para cancelar. Tente de novo.');
     await carregarDia();
+    carregarProximas();
   } catch (falha) {
     if (falha instanceof SessaoExpirada) { mostrarEntrar(); return; }
     const erro = document.getElementById('painel-erro');

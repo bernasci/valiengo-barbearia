@@ -271,11 +271,14 @@ function pintarHoras() {
 
   const slots = slotsDoDia(escolha.data, buscarServico(escolha.servicoId));
 
+  // Só os horários livres aparecem. Um horário tomado (ou já passado) some da
+  // lista em vez de ficar riscado — a grade mostra apenas o que dá para marcar.
   for (const { hora, disponivel } of slots) {
+    if (!disponivel) continue;
     const rotulo = document.createElement('label');
     rotulo.className = 'ficha';
     rotulo.innerHTML = `
-      <input type="radio" name="hora" value="${hora}" ${disponivel ? '' : 'disabled'}>
+      <input type="radio" name="hora" value="${hora}">
       <span class="ficha__corpo">${hora}</span>`;
     caixa.append(rotulo);
   }
