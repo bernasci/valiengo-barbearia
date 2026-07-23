@@ -428,6 +428,96 @@
   .edit-preco, .edit-dur { width: 100%; }
 }
 
+/* ── Caixa ──────────────────────────────────────────────── */
+
+.caixa-topo { margin-bottom: 1.25rem; }
+.caixa-sub { margin-top: .35rem; color: var(--aco); font-size: .9rem; line-height: 1.4; }
+
+.caixa-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .6rem;
+  margin-bottom: 2rem;
+}
+.caixa-card {
+  padding: 1rem .9rem;
+  background: linear-gradient(160deg, var(--breu-claro), var(--breu));
+  border: 1px solid rgba(240, 240, 240, .12);
+  border-top: 2px solid var(--latao);
+}
+.caixa-card__rotulo {
+  font-family: var(--fonte-util);
+  font-size: .68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--aco);
+}
+.caixa-card__valor {
+  margin: .35rem 0 .2rem;
+  font-family: var(--fonte-display);
+  font-size: clamp(1.4rem, 1.1rem + 1.6vw, 1.9rem);
+  line-height: 1.05;
+  color: var(--latao-claro);
+  font-variant-numeric: tabular-nums;
+}
+.caixa-card__meta {
+  font-family: var(--fonte-util);
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--porcelana-fosca);
+}
+
+.caixa-bloco { margin-bottom: 2rem; }
+.caixa-bloco__titulo {
+  margin-bottom: .75rem;
+  font-family: var(--fonte-util);
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  color: var(--latao);
+}
+.caixa-linhas { display: grid; gap: .3rem; }
+.caixa-linha {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: 1rem;
+  padding: .6rem .8rem;
+  background: rgba(240, 240, 240, .03);
+  border: 1px solid rgba(240, 240, 240, .1);
+}
+.caixa-linha__dia { font-family: var(--fonte-texto); color: var(--porcelana); text-transform: capitalize; }
+.caixa-linha__n {
+  font-family: var(--fonte-util);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--aco);
+}
+.caixa-linha__valor {
+  font-family: var(--fonte-util);
+  font-size: .95rem;
+  color: var(--latao-claro);
+  font-variant-numeric: tabular-nums;
+}
+.caixa-vazio {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--aco);
+  font-family: var(--fonte-util);
+  font-size: .85rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+.caixa-nota { color: var(--aco); font-size: .82rem; line-height: 1.5; }
+
+@media (max-width: 30rem) {
+  .caixa-cards { grid-template-columns: 1fr; }
+}
+
 /* ── Navegar ────────────────────────────────────────────── */
 
 .navegar {

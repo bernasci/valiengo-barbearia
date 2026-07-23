@@ -51,6 +51,7 @@
 
   <nav class="abas" role="tablist" aria-label="Seções do painel">
     <button class="aba" id="tab-agenda" type="button" role="tab" data-aba="agenda" aria-selected="true">Agenda</button>
+    <button class="aba" id="tab-caixa" type="button" role="tab" data-aba="caixa" aria-selected="false">Caixa</button>
     <button class="aba" id="tab-assinantes" type="button" role="tab" data-aba="assinantes" aria-selected="false">Assinantes</button>
     <button class="aba" id="tab-ajustes" type="button" role="tab" data-aba="ajustes" aria-selected="false">Ajustes</button>
   </nav>
@@ -76,6 +77,11 @@
     <main class="lista" id="lista"></main>
 
     <p class="erro" id="painel-erro" role="alert" hidden></p>
+  </section>
+
+  <!-- Aba: caixa (faturamento pela agenda) — preenchida por painel-caixa.js -->
+  <section id="aba-caixa" role="tabpanel" aria-labelledby="tab-caixa" hidden>
+    <div id="caixa-conteudo"></div>
   </section>
 
   <!-- Aba: assinantes — preenchida por painel-assinantes.js -->

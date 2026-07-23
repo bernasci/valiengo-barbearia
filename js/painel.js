@@ -6,6 +6,7 @@ import { ESTUDIO, DIAS_SEMANA, buscarServico } from './config.js';
 import { entrar, sair, estaLogado, comSessao, SessaoExpirada } from './sessao.js';
 import { iniciarAjustes } from './painel-ajustes.js';
 import { iniciarAssinantes } from './painel-assinantes.js';
+import { iniciarCaixa } from './painel-caixa.js';
 
 const iso = (data) => {
   const d = new Date(data);
@@ -31,6 +32,7 @@ function mostrarPainel() {
   document.getElementById('painel').hidden = false;
   // Sempre abre na aba Agenda.
   document.getElementById('aba-agenda').hidden = false;
+  document.getElementById('aba-caixa').hidden = true;
   document.getElementById('aba-assinantes').hidden = true;
   document.getElementById('aba-ajustes').hidden = true;
   document.querySelectorAll('.aba').forEach((b) => b.setAttribute('aria-selected', String(b.id === 'tab-agenda')));
@@ -79,6 +81,7 @@ function ligarAbas() {
   const botoes = [...document.querySelectorAll('.aba')];
   const paineis = {
     agenda: document.getElementById('aba-agenda'),
+    caixa: document.getElementById('aba-caixa'),
     assinantes: document.getElementById('aba-assinantes'),
     ajustes: document.getElementById('aba-ajustes'),
   };
@@ -87,6 +90,7 @@ function ligarAbas() {
     botoes.forEach((x) => x.setAttribute('aria-selected', String(x === b)));
     for (const [nome, pane] of Object.entries(paineis)) pane.hidden = nome !== alvo;
     // Recarrega fresco do banco toda vez que a aba abre.
+    if (alvo === 'caixa') iniciarCaixa({ aoExpirar: mostrarEntrar });
     if (alvo === 'ajustes') iniciarAjustes({ aoExpirar: mostrarEntrar });
     if (alvo === 'assinantes') iniciarAssinantes({ aoExpirar: mostrarEntrar });
   }));
