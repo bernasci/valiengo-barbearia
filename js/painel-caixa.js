@@ -94,17 +94,6 @@ async function render() {
     porDia[r.data].cortes += 1;
   }
 
-  // Por serviço no mês (só avulsos).
-  const porServico = {};
-  for (const r of noMes) {
-    if (ehPlano(r.servico_id)) continue;
-    const s = buscarServico(r.servico_id);
-    const nome = s ? s.nome : r.servico_id;
-    (porServico[nome] ??= { receita: 0, n: 0 });
-    porServico[nome].receita += valorDe(r);
-    porServico[nome].n += 1;
-  }
-
   alvo.replaceChildren(
     el('div', { class: 'caixa-topo' },
       el('h2', { class: 'ajustes-grupo__titulo', text: 'Caixa' }),
@@ -115,8 +104,9 @@ async function render() {
       cardCaixa('Esta semana', somar((r) => r.data >= semDe && r.data <= semAte)),
       cardCaixa('Este mês', somar((r) => r.data >= mesDe && r.data <= mesAte)),
     ),
+    blocoConsulta(hojeISO),
     blocoDias(porDia),
-    blocoServicos(porServico),
+    blocoServicos(noMes),
     el('p', { class: 'caixa-nota', text:
       'Soma o preço de tabela de cada serviço avulso marcado. Não inclui '
       + 'mensalistas (a mensalidade fica em Assinantes), gorjeta nem produto — e '
@@ -168,18 +158,93 @@ function blocoDias(porDia) {
   return bloco;
 }
 
-function blocoServicos(porServico) {
-  const nomes = Object.keys(porServico)
-    .sort((a, b) => porServico[b].receita - porServico[a].receita);
-  if (!nomes.length) return null;
+// Receita por serviço avulso (planos ficam de fora), do maior para o menor.
+function quebraServico(reservas) {
+  const por = {};
+  for (const r of reservas) {
+    if (ehPlano(r.servico_id)) continue;
+    const s = buscarServico(r.servico_id);
+    const nome = s ? s.nome : r.servico_id;
+    (por[nome] ??= { receita: 0, n: 0 });
+    por[nome].receita += valorDe(r);
+    por[nome].n += 1;
+  }
+  return Object.keys(por)
+    .sort((a, b) => por[b].receita - por[a].receita)
+    .map((nome) => ({ nome, ...por[nome] }));
+}
+
+function listaServicos(quebra) {
+  const lista = el('div', { class: 'caixa-linhas' });
+  for (const { nome, receita, n } of quebra) lista.append(linha(nome, `${n}×`, receita));
+  return lista;
+}
+
+function blocoServicos(reservas) {
+  const quebra = quebraServico(reservas);
+  if (!quebra.length) return null;
+  return el('section', { class: 'caixa-bloco' },
+    el('h3', { class: 'caixa-bloco__titulo', text: 'Por serviço (mês)' }),
+    listaServicos(quebra));
+}
+
+/* ── Consultar um dia qualquer ───────────────────────────── */
+
+function blocoConsulta(inicialISO) {
+  const input = el('input', { class: 'edit-campo caixa-data', type: 'date', value: inicialISO });
+  const res = el('div', { class: 'caixa-consulta__res' });
+
+  const consultar = async () => {
+    const dia = input.value;
+    if (!dia) { res.replaceChildren(); return; }
+    res.replaceChildren(el('p', { class: 'caixa-consulta__vazio', text: 'Carregando…' }));
+    try {
+      const r = await api(
+        `agendamentos?select=data,servico_id&data=eq.${dia}&order=inicio.asc`,
+        { method: 'GET' },
+      );
+      res.replaceChildren(...pintarConsulta(dia, await r.json()));
+    } catch (falha) {
+      if (falha instanceof SessaoExpirada) return aoExpirar();
+      res.replaceChildren(el('p', { class: 'ajustes-erro', text: falha.message }));
+    }
+  };
+  input.addEventListener('change', consultar);
 
   const bloco = el('section', { class: 'caixa-bloco' },
-    el('h3', { class: 'caixa-bloco__titulo', text: 'Por serviço (mês)' }));
-  const lista = el('div', { class: 'caixa-linhas' });
-  for (const nome of nomes) {
-    const { receita, n } = porServico[nome];
-    lista.append(linha(nome, `${n}×`, receita));
-  }
-  bloco.append(lista);
+    el('h3', { class: 'caixa-bloco__titulo', text: 'Consultar um dia' }),
+    el('label', { class: 'caixa-consulta' },
+      el('span', { class: 'caixa-consulta__rot', text: 'Dia' }),
+      input,
+    ),
+    res,
+  );
+  consultar(); // já abre mostrando o dia escolhido
   return bloco;
+}
+
+function pintarConsulta(dia, reservas) {
+  const rotulo = new Date(`${dia}T12:00`)
+    .toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+
+  if (!reservas.length) {
+    return [el('p', { class: 'caixa-consulta__vazio', text: `Nenhum corte marcado — ${rotulo}.` })];
+  }
+
+  const receita = reservas.reduce((s, r) => s + valorDe(r), 0);
+  const assinantes = reservas.filter((r) => ehPlano(r.servico_id)).length;
+  const meta = assinantes
+    ? `${plural(reservas.length, 'corte', 'cortes')} · ${plural(assinantes, 'assinante', 'assinantes')}`
+    : plural(reservas.length, 'corte', 'cortes');
+
+  const nos = [
+    el('div', { class: 'caixa-consulta__resumo' },
+      el('span', { class: 'caixa-consulta__dia', text: rotulo }),
+      el('span', { class: 'caixa-consulta__valor', text: dinheiro(receita) }),
+      el('span', { class: 'caixa-consulta__meta', text: meta }),
+    ),
+  ];
+  const quebra = quebraServico(reservas);
+  if (quebra.length) nos.push(listaServicos(quebra));
+  return nos;
 }

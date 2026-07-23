@@ -514,6 +514,56 @@
 }
 .caixa-nota { color: var(--aco); font-size: .82rem; line-height: 1.5; }
 
+/* Consultar um dia qualquer */
+.caixa-consulta { display: flex; align-items: center; gap: .6rem; margin-bottom: .9rem; }
+.caixa-consulta__rot {
+  font-family: var(--fonte-util);
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--aco);
+}
+.caixa-data { width: auto; color-scheme: dark; }
+.caixa-consulta__res { display: grid; gap: .5rem; }
+.caixa-consulta__vazio {
+  padding: .9rem;
+  color: var(--aco);
+  font-family: var(--fonte-util);
+  font-size: .82rem;
+  letter-spacing: .04em;
+}
+.caixa-consulta__resumo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .3rem 1rem;
+  padding: .9rem;
+  background: linear-gradient(160deg, var(--breu-claro), var(--breu));
+  border: 1px solid rgba(240, 240, 240, .12);
+  border-left: 2px solid var(--latao);
+}
+.caixa-consulta__dia {
+  flex: 1 1 100%;
+  font-family: var(--fonte-util);
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--aco);
+}
+.caixa-consulta__valor {
+  font-family: var(--fonte-display);
+  font-size: 1.5rem;
+  color: var(--latao-claro);
+  font-variant-numeric: tabular-nums;
+}
+.caixa-consulta__meta {
+  font-family: var(--fonte-util);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--porcelana-fosca);
+}
+
 @media (max-width: 30rem) {
   .caixa-cards { grid-template-columns: 1fr; }
 }
